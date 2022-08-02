@@ -1,10 +1,8 @@
 <?php
-use App\Routes\Router;
-
 spl_autoload_register(function ($class) {
     require_once($class.'.php');
 });
 
 $url = strtok($_SERVER["REQUEST_URI"], '?');
 
-(new Router())->route($url);
+(new App\Routes\Router())->route($url);
