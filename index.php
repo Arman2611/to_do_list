@@ -6,6 +6,7 @@ $url = strtok($_SERVER["REQUEST_URI"], '?');
 
 
 use App\Routes\Router;
-
-(new Router())->route($url);
+echo "ZZZ";
+return "KKK";
+//(new Router())->route($url);
 
