@@ -1,12 +1,12 @@
 <?php spl_autoload_register();
 
 //use App\Routes\Router;
+require_once './App/Routes/Router.php';
 
 $url = strtok($_SERVER["REQUEST_URI"], '?');
 
 
 use App\Routes\Router;
-echo "ZZZ";
-return "KKK";
-//(new Router())->route($url);
+//echo "ZZZ";
+(new Router())->route($url);
 
