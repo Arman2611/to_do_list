@@ -56,7 +56,7 @@ class TaskController
             }
         }
 
-        (new HTMLRenderingService())->render('App\Public\views\main.php', [
+        (new HTMLRenderingService())->render('App/Public/views/main.php', [
             'page-title' => ViewConsts::PAGE_TITLE,
             'tasks' => $tasks
         ]);
@@ -64,7 +64,7 @@ class TaskController
 
     public function create (): void
     {
-        (new HTMLRenderingService())->render('App\Public\views\newTaskForm.php', [
+        (new HTMLRenderingService())->render('App/Public/views/newTaskForm.php', [
             'page-title' => ViewConsts::PAGE_TITLE
         ]);
     }
@@ -108,7 +108,7 @@ class TaskController
 
     public function notFound (): void
     {
-        (new HTMLRenderingService())->render('App\Public\views\404.php', [
+        (new HTMLRenderingService())->render('App/Public/views/404.php', [
             'page-title' => ViewConsts::PAGE_TITLE,
             'page-not-found-message' => ViewConsts::PAGE_NOT_FOUND_MESSAGE
         ]);
