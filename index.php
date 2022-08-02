@@ -2,7 +2,7 @@
     require_once($class.'.php');
 });
 
-require_once 'App\test.php';
+require_once 'App/test.php';
 
 //use App\Routes\Router;
 //
