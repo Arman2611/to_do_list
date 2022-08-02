@@ -1,5 +1,5 @@
 <?php spl_autoload_register(function ($class) {
-    require_once('app/'.$class.'.php');
+    require_once('app\\'.$class.'.php');
 });
 
 use App\Routes\Router;
