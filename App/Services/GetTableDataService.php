@@ -6,7 +6,7 @@ use App\Databases\Database;
 
 class GetTableDataService
 {
-    private function getCount($DB, $tableName): int
+    public function getCount($DB, $tableName): int
     {
         $query = "SELECT COUNT(*) as count FROM $tableName";
 

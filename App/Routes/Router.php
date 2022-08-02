@@ -4,6 +4,7 @@ namespace App\Routes;
 
 use App\Middlewares\CookieCleaner;
 use App\Controllers\TaskController;
+use App\Controllers\MigrationController;
 
 class Router
 {
@@ -15,6 +16,7 @@ class Router
             '/' => (new TaskController())->index(),
             '/task/create' => (new TaskController())->create(),
             '/task/store' => (new TaskController())->store(),
+            '/config/migrate' => (new MigrationController())->migrate(),
             default => (new TaskController())->notFound()
         };
 	}

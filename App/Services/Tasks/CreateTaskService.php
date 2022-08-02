@@ -2,7 +2,7 @@
 
 namespace App\Services\Tasks;
 
-use App\Services\Consts\TaskConsts;
+use App\Consts\TaskConsts;
 use App\Services\InsertTableDataService;
 
 class CreateTaskService
