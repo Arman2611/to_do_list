@@ -2,7 +2,8 @@
 
 namespace App\Routes;
 
-use App\Middlewares\CookieCleaner;
+//use App\Middlewares\CookieCleaner;
+require_once './App/Middlewares/CookieCleaner.php';
 use App\Controllers\TaskController;
 use App\Controllers\MigrationController;
 
