@@ -19,19 +19,7 @@
                     echo $GLOBALS['app-name'];
                 ?>
             </a>
-            <?php
-                if (isset($_COOKIE['PHPSESSID'])) {
-                    session_start();
-
-                    if (isset($_SESSION['username'])) {
-                        echo "<h6 class='text-white'>Привет, ".$_SESSION['username']."</h6>";
-                    }
-
-                    echo "<a class='btn btn-outline-light' href='/auth/logout'>Выйти</a>";
-                } else {
-                    echo "<a class='btn btn-outline-light' href='/auth/login'>Войти</a>";
-                }
-            ?>
+            <a class="btn btn-outline-light" href='/auth/login'>Войти</a>
         </div>
     </nav>
 </header>
@@ -44,23 +32,19 @@
             echo $_COOKIE['warning_message'];
             echo '</div>';
 
-            setcookie('warning_message', '', time()-1, "/task");
+            setcookie('warning_message', '', time()-1, "/auth");
         }
         ?>
-        <form action="/task/store" method="POST">
+        <form action="/auth/login/store" method="POST">
             <div class="mb-3">
                 <label class="form-label">Имя пользователя</label>
-                <input type="text" class="form-control" name="username" required minlength="2" maxlength="36">
+                <input type="text" class="form-control" name="username" required minlength="1" maxlength="36">
             </div>
             <div class="mb-3">
-                <label class="form-label">E-mail</label>
-                <input type="email" class="form-control" name="email" required minlength="5" maxlength="50">
+                <label class="form-label">Пароль</label>
+                <input type="password" class="form-control" name="password" required minlength="2" maxlength="36">
             </div>
-            <div class="mb-3">
-                <label class="form-label">Текст задачи</label>
-                <textarea class="form-control" name="task" rows="3" required minlength="2" maxlength="500"></textarea>
-            </div>
-            <input class="btn btn-success" type="submit" value="Добавить задачу">
+            <input class="btn btn-success mt-3" type="submit" value="Войти">
         </form>
     </div>
 </main>
