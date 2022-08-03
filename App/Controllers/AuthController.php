@@ -12,7 +12,7 @@ class AuthController
 {
     public function login (): void
     {
-        (new HTMLRenderingService())->render('App/Public/views/loginForm.php', [
+        (new HTMLRenderingService())->render('App/Public/views/login.php', [
             'page-title' => ViewConsts::LOGIN_PAGE_TITLE,
             'app-name' => ViewConsts::APP_NAME
         ]);

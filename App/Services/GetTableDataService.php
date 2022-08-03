@@ -15,7 +15,21 @@ class GetTableDataService
         return $count;
     }
 
-    public function get(string $tableName, array $columns, string $orderColumn='', string $order='', int $page=1, int $chunk=3): array
+    public function getByID(string $tableName, string $primaryKey, string $primaryKeyValue): array
+    {
+        $DB = new Database();
+        $query = "SELECT * FROM $tableName WHERE $primaryKey=$primaryKeyValue";
+
+        $data = $DB->query($query);
+
+        if (isset($data[0])) {
+            return $data[0];
+        } else {
+            return [];
+        }
+    }
+
+    public function get(string $tableName, array $columns, string $orderColumn = '', string $order ='', int $page=1, int $chunk=3): array
     {
         $DB = new Database();
 
