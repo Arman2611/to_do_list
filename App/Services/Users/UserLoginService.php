@@ -13,23 +13,24 @@ class UserLoginService
 
         $query = "SELECT * FROM ";
         $query .= UserConsts::USERS_TABLE_NAME . " WHERE ";
+        $query .= "username ='" . $data['username'] . "'";
 
-        foreach ($data as $key => $value) {
-            $query .= "$key='$value' AND ";
-        }
-
-        if (str_ends_with($query, ' AND ')){
-            $query = substr($query, 0, -5);
-        }
-
-        $data = $DB->query($query);
+        $answer = $DB->query($query);
 
         $result = [];
 
-        if (isset($data[0])) {
-            $result['authorized'] = true;
-            $result['username'] = $data[0]['username'];
+        if (isset($answer[0])) {
+
+            if (password_verify($data['password'], $answer[0]['password'])) {
+
+                $result['authorized'] = true;
+                $result['username'] = $answer[0]['username'];
+            } else {
+
+                $result['authorized'] = false;
+            }
         } else {
+
             $result['authorized'] = false;
         }
 

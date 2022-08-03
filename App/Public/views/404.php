@@ -25,9 +25,9 @@
 
                     if (isset($_SESSION['username'])) {
                         echo "<h6 class='text-white'>Привет, ".$_SESSION['username']."</h6>";
+                        echo "<a class='btn btn-outline-light' href='/auth/logout'>Выйти</a>";
                     }
 
-                    echo "<a class='btn btn-outline-light' href='/auth/logout'>Выйти</a>";
                 } else {
                     echo "<a class='btn btn-outline-light' href='/auth/login'>Войти</a>";
                 }

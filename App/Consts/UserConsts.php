@@ -14,4 +14,5 @@ class UserConsts
     const AUTH_INVALID_CREDENTIALS_MESSAGE = 'Неверный пароль или имя пользователя';
     const AUTH_LOGIN_SUCCESS_MESSAGE = 'Вход успешно выполнен';
     const AUTH_LOGIN_FAILED_MESSAGE = 'При входе возникла ошибка';
+    const AUTH_NOT_AUTHORIZED = 'Не зарегистрированным пользователям доступ запрещён';
 }

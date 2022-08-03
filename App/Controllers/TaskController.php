@@ -3,12 +3,15 @@
 namespace App\Controllers;
 
 use App\Consts\TaskConsts;
+use App\Consts\UserConsts;
 use App\Consts\ViewConsts;
 use App\Services\HTMLRenderingService;
+use App\Services\Tasks\GetTaskByIdService;
 use App\Services\Tasks\GetTasksService;
 use App\Services\Tasks\CreateTaskService;
-
+use App\Services\Tasks\ChangeTaskService;
 use App\Middlewares\InsertTableDataValidator;
+use App\Middlewares\ChangeTableDataValidator;
 
 class TaskController
 {
@@ -18,7 +21,6 @@ class TaskController
         $order = TaskConsts::TASKS_DEFAULT_ORDER;
         $page = TaskConsts::TASKS_DEFAULT_PAGE;
         $chunk = TaskConsts::TASKS_SINGLE_PAGE_TASKS_COUNT;
-
 
         if (isset($_GET["order_column"]) and in_array($_GET["order_column"], TaskConsts::TASKS_TABLE_COLUMNS)) {
             $order_column = $_GET["order_column"];
@@ -32,6 +34,12 @@ class TaskController
             setcookie('order', $order, 0, "/");
         } else if (isset($_COOKIE["order"]) and in_array($_COOKIE["order"], TaskConsts::TASKS_ORDER_VARIANTS)) {
             $order = $_COOKIE["order"];
+        }
+
+        if (!isset($_GET["order_column"]) and !isset($_GET["order"])) {
+
+            $_COOKIE['page'] = $page;
+            setcookie('page', $page, 0, "/");
         }
 
         if (isset($_GET["page"]) and intval($_GET['page']) > 0) {
@@ -65,7 +73,7 @@ class TaskController
 
     public function create (): void
     {
-        (new HTMLRenderingService())->render('App/Public/views/newTaskForm.php', [
+        (new HTMLRenderingService())->render('App/Public/views/newTask.php', [
             'page-title' => ViewConsts::NEW_TASK_PAGE_TITLE,
             'app-name' => ViewConsts::APP_NAME
         ]);
@@ -104,9 +112,133 @@ class TaskController
             header("refresh: 0; url=/task/create");
             setcookie('warning_message', $warnings, 0, "/task");
         }
-
     }
 
+    public function edit (): void
+    {
+        if (isset($_COOKIE['PHPSESSID'])) {
+            session_start();
+
+            if (isset($_SESSION['username'])) {
+                if (isset($_GET["task_id"]) and $_GET["task_id"] != '') {
+                    $task = (new GetTaskByIdService())->get($_GET["task_id"]);
+
+                    if ($task != []) {
+                        (new HTMLRenderingService())->render('App/Public/views/editTask.php', [
+                            'page-title' => ViewConsts::EDIT_TASK_PAGE_TITLE,
+                            'app-name' => ViewConsts::APP_NAME,
+                            'task' => $task
+                        ]);
+                    } else {
+
+                        $_COOKIE['warning_message'] = TaskConsts::TASK_NOT_FOUND_MESSAGE;
+                        setcookie('warning_message', TaskConsts::TASK_NOT_FOUND_MESSAGE, 0, "/task");
+
+                        (new HTMLRenderingService())->render('App/Public/views/editTask.php', [
+                            'page-title' => ViewConsts::EDIT_TASK_PAGE_TITLE,
+                            'app-name' => ViewConsts::APP_NAME
+                        ]);
+                    }
+                } else {
+                    if (isset($_COOKIE['warning_message'])) {
+
+                        setcookie('warning_message', $_COOKIE['warning_message'], 0, "/task");
+
+                        (new HTMLRenderingService())->render('App/Public/views/editTask.php', [
+                            'page-title' => ViewConsts::EDIT_TASK_PAGE_TITLE,
+                            'app-name' => ViewConsts::APP_NAME
+                        ]);
+                    } else {
+
+                        $_COOKIE['warning_message'] = TaskConsts::TASK_ID_NOT_SET_MESSAGE;
+                        setcookie('warning_message', TaskConsts::TASK_ID_NOT_SET_MESSAGE, 0, "/task");
+
+                        (new HTMLRenderingService())->render('App/Public/views/editTask.php', [
+                            'page-title' => ViewConsts::EDIT_TASK_PAGE_TITLE,
+                            'app-name' => ViewConsts::APP_NAME
+                        ]);
+                    }
+                }
+            } else {
+
+                $_COOKIE['warning_message'] = UserConsts::AUTH_NOT_AUTHORIZED;
+                setcookie('warning_message', UserConsts::AUTH_NOT_AUTHORIZED, 0, "/task");
+
+                (new HTMLRenderingService())->render('App/Public/views/editTask.php', [
+                    'page-title' => ViewConsts::EDIT_TASK_PAGE_TITLE,
+                    'app-name' => ViewConsts::APP_NAME
+                ]);
+            }
+        } else {
+
+            $_COOKIE['warning_message'] = UserConsts::AUTH_NOT_AUTHORIZED;
+            setcookie('warning_message', UserConsts::AUTH_NOT_AUTHORIZED, 0, "/task");
+
+            (new HTMLRenderingService())->render('App/Public/views/editTask.php', [
+                'page-title' => ViewConsts::EDIT_TASK_PAGE_TITLE,
+                'app-name' => ViewConsts::APP_NAME
+            ]);
+        }
+    }
+
+    public function editHandler (): void
+    {
+        if (isset($_COOKIE['PHPSESSID'])) {
+            session_start();
+
+            if (isset($_SESSION['username'])) {
+
+                $data = [];
+
+                if (isset($_POST['task_id'])) {
+                    $data['task_id'] = htmlspecialchars($_POST['task_id']);
+                }
+                if (isset($_POST['task'])) {
+                    $data['task'] = htmlspecialchars($_POST['task']);
+                }
+                if (isset($_POST['status'])) {
+                    $data['status'] = htmlspecialchars($_POST['status']);
+                }
+
+                $warnings = (new ChangeTableDataValidator())->validate($data);
+
+                if ($warnings === '') {
+                    try {
+                        (new ChangeTaskService())->change($data);
+
+                        header("refresh: 0; url=/");
+                        setcookie('creation_message', TaskConsts::TASK_UPDATED_MESSAGE, 0, "/");
+                    } catch(\PDOException $err) {
+
+                        header("refresh: 0; url=/task/edit");
+                        setcookie('warning_message', TaskConsts::TASK_UPDATE_FAILED_MESSAGE, 0, "/task");
+                    }
+                } else {
+
+                    header("refresh: 0; url=/task/edit/");
+                    setcookie('warning_message', $warnings, 0, "/task");
+                }
+            } else {
+
+                $_COOKIE['warning_message'] = UserConsts::AUTH_NOT_AUTHORIZED;
+                setcookie('warning_message', UserConsts::AUTH_NOT_AUTHORIZED, 0, "/task");
+
+                (new HTMLRenderingService())->render('App/Public/views/editTask.php', [
+                    'page-title' => ViewConsts::EDIT_TASK_PAGE_TITLE,
+                    'app-name' => ViewConsts::APP_NAME
+                ]);
+            }
+        } else {
+
+            $_COOKIE['warning_message'] = UserConsts::AUTH_NOT_AUTHORIZED;
+            setcookie('warning_message', UserConsts::AUTH_NOT_AUTHORIZED, 0, "/task");
+
+            (new HTMLRenderingService())->render('App/Public/views/editTask.php', [
+                'page-title' => ViewConsts::EDIT_TASK_PAGE_TITLE,
+                'app-name' => ViewConsts::APP_NAME
+            ]);
+        }
+    }
 
     public function notFound (): void
     {

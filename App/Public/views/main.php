@@ -25,9 +25,9 @@
 
                         if (isset($_SESSION['username'])) {
                             echo "<h6 class='text-white'>Привет, ".$_SESSION['username']."</h6>";
+                            echo "<a class='btn btn-outline-light' href='/auth/logout'>Выйти</a>";
                         }
 
-                        echo "<a class='btn btn-outline-light' href='/auth/logout'>Выйти</a>";
                     } else {
                         echo "<a class='btn btn-outline-light' href='/auth/login'>Войти</a>";
                     }
@@ -88,7 +88,13 @@
                                 </a>
                             </span>
                         </th>
-                        <th class="col-sm-6">текст задачи</th>
+                        <?php
+                            if (isset($_SESSION['username'])) {
+                                echo "<th class='col-sm-5'>текст задачи</th>";
+                            } else {
+                                echo "<th class='col-sm-6'>текст задачи</th>";
+                            }
+                        ?>
                         <th class="col-sm-2">
                             статус
                             <span class="mx-2">
@@ -104,17 +110,39 @@
                                 </a>
                             </span>
                         </th>
+                        <?php
+                            if (isset($_SESSION['username'])) {
+                                echo "<th class='col-sm-1'>Действие</th>";
+                            }
+                        ?>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                        foreach ($GLOBALS['tasks'] as $index => $record) {
-                            echo "<tr class='row'>";
-                            echo "<td class='col-sm-2'>" . $record['username'] . "</td>";
-                            echo "<td class='col-sm-2'>" . $record['email'] . "</td>";
-                            echo "<td class='col-sm-6'>" . $record['task'] . "</td>";
-                            echo "<td class='col-sm-2'>" . $record['status'] . "</td>";
-                            echo "</tr>";
+                        if (isset($_SESSION['username'])) {
+                            echo "<h6 class='text-white'>Привет, " . $_SESSION['username'] . "</h6>";
+                            echo "<a class='btn btn-outline-light' href='/auth/logout'>Выйти</a>";
+
+                            foreach ($GLOBALS['tasks'] as $index => $record) {
+                                echo "<tr class='row'>";
+                                echo "<td class='col-sm-2'>" . $record['username'] . "</td>";
+                                echo "<td class='col-sm-2'>" . $record['email'] . "</td>";
+                                echo "<td class='col-sm-5'>" . $record['task'] . "</td>";
+                                echo "<td class='col-sm-2'>" . $record['status'] . "</td>";
+                                echo "<td class='col-sm-1'>";
+                                echo "<a href='/task/edit/?task_id=" . $record['task_id'] . "' class='link-primary'>Изменить</a>";
+                                echo "</td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            foreach ($GLOBALS['tasks'] as $index => $record) {
+                                echo "<tr class='row'>";
+                                echo "<td class='col-sm-2'>" . $record['username'] . "</td>";
+                                echo "<td class='col-sm-2'>" . $record['email'] . "</td>";
+                                echo "<td class='col-sm-6'>" . $record['task'] . "</td>";
+                                echo "<td class='col-sm-2'>" . $record['status'] . "</td>";
+                                echo "</tr>";
+                            }
                         }
                     ?>
                     </tbody>

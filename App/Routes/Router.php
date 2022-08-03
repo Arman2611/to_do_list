@@ -17,6 +17,8 @@ class Router
             '/' => (new TaskController())->index(),
             '/task/create' => (new TaskController())->create(),
             '/task/store' => (new TaskController())->store(),
+            '/task/edit/' => (new TaskController())->edit(),
+            '/task/edit/store' => (new TaskController())->editHandler(),
             '/auth/login' => (new AuthController())->login(),
             '/auth/logout' => (new AuthController())->logout(),
             '/auth/login/store' => (new AuthController())->loginHandler(),
